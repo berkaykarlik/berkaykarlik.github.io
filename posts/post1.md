@@ -1,5 +1,7 @@
-@def title = "Introduction to Image generation with Artificial Intelligence"
-@def tags = ["post"]
++++
+title = "Introduction to Image generation with Artificial Intelligence"
+tags = ["post"]
++++
 
 @@post-image
 ~~~
