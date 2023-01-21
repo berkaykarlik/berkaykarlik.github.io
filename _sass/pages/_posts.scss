@@ -27,3 +27,15 @@
   margin-bottom: 1rem;
   color: $post-date-color;
 }
+
+.post-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.post-image img {
+  padding: 0;
+  margin: 0;
+}
