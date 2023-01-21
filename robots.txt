@@ -1,0 +1,4 @@
+Sitemap: https://berkaykarlik.github.io/berkayKarlik/sitemap.xml
+
+User-agent: *
+Disallow:
