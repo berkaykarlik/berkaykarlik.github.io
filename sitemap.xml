@@ -2,26 +2,32 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
 <url>
+    <loc>https://berkaykarlik.github.io/posts/2/index.html</loc>
+    <lastmod>2023-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+</url>
+<url>
     <loc>https://berkaykarlik.github.io/404/index.html</loc>
-    <lastmod>2023-01-22</lastmod>
+    <lastmod>2023-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>https://berkaykarlik.github.io/index.html</loc>
-    <lastmod>2023-01-22</lastmod>
+    <lastmod>2023-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>https://berkaykarlik.github.io/posts/post1/index.html</loc>
-    <lastmod>2023-01-22</lastmod>
+    <lastmod>2023-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>
 <url>
     <loc>https://berkaykarlik.github.io/aboutme/index.html</loc>
-    <lastmod>2023-01-22</lastmod>
+    <lastmod>2023-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
 </url>

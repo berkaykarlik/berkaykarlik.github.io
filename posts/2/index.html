@@ -1,0 +1,136 @@
+<!doctype html> <html lang=en > <meta charset=UTF-8 > <meta name=viewport  content="width=device-width, initial-scale=1"> <link rel=stylesheet  href="/libs/katex/katex.min.css"> <link rel=stylesheet  href="/libs/highlight/styles/github.min.css"> <link rel=stylesheet  href="/css/franklin.css"> <link rel=stylesheet  href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic|Source+Code+Pro:400,700" type="text/css"> <link rel=stylesheet  href="/css/font-awesome.min.css"> <link rel=stylesheet  href="/css/celeste.min.css"> <link rel=icon  type="image/png" sizes=192x192  href="/assets/favicon.png"> <link rel="shortcut icon" href="/assets/favicon.ico"> <link rel=apple-touch-icon-precomposed  sizes=152x152  href="/assets/apple-touch-icon.png"> <title>Simple Physics Simulation with Julia</title> <header> <nav class=nav-main > <ul> <li class=hvr-underline-reveal ><a href="/">Home</a> <li class=hvr-underline-reveal ><a href="/aboutme">About Me</a> </ul> </nav> </header> <script async src="https://www.googletagmanager.com/gtag/js?id=G-RB47W1W53Y"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-RB47W1W53Y'); </script> <div class=franklin-content > <h1 id=simple_physics_simulation_with_julia ><a href="#simple_physics_simulation_with_julia" class=header-anchor >Simple Physics Simulation with Julia</a></h1> <div class=post-image > <img src="https://drive.google.com/uc?id=1n_rvOpVbqtvqdRe7jR_YlQmDH0sZiBEs" alt="ball bouncing up and down left and right" style="height:256px;width:256px"/> <em>Ball goes up, ball comes down</em></div> <p>Recently, I have discovered a great channel called <a href="https://www.youtube.com/@TenMinutePhysics">Ten Minute Physics</a>. In it, creator Matthias Müller provides simple steps to write beginner friendly physics simulations. I&#39;m just a few videos in, and it really looks exciting. In this <a href="https://www.youtube.com/watch?v&#61;oPuSvdBGrpE">first video</a>, he builds up a simple cannonball simulation in JavaScript.</p> <p>I thought re-implementing this myself is a good way of internalizing the knowledge behind. I have decided to use Julia for coding because of my affinity towards the language and my desire to enhance my skills. I will also be using a simple game engine package called <a href="https://docs.juliahub.com/GameZero/tTDGf/0.3.1/">GameZero.jl</a> because the focus of this exercise is to learn about simulation logic and not graphics programming. A game engine makes it easier to handle graphics with a higher level abstraction.</p> <p><a href="https://www.youtube.com/watch?v&#61;VuchBrLdzfY&amp;t&#61;508s">doggo dot jl</a> has a good simulation tutorial that uses GameZero.jl as well. His tutorial helped me learn how to use GameZero.jl but for the simulation I followed the guidance of ten minute physics.</p> <h2 id=what_is_a_simulation ><a href="#what_is_a_simulation" class=header-anchor >What is a simulation?</a></h2> <p>A simulation is when you create a program that mimics the actions of a system for a certain period of time so that you can observe and analyze its behavior. If we can describe a system&#39;s behaviour in terms of mathematical rules, we can write a program to apply this rules in many iterations to create the entire behaviour over time.</p> <p>Let&#39;s imagine a ball in an empty room. Let&#39;s just imagine a portal appeared in the wall of the room and a ball thrown from the portal and then portal has disappeared. What will be the ball doing? It will be falling vertically and moving horizontally &#40;because its thrown&#41; at the same time. We also know, from high school physics how an object like a ball would behave i.e, falling and going forward, and how can we describe such behaviour in terms of equations:</p> <span class=katex-display ><span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML" display=block ><semantics><mrow><mi>v</mi><mo>=</mo><msub><mi>v</mi><mn>0</mn></msub><mo>+</mo><mi>a</mi><mi mathvariant=normal >Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex"> v = v_0 + a \Delta t </annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class=mspace  style="margin-right:0.2778em;"></span><span class=mrel >=</span><span class=mspace  style="margin-right:0.2778em;"></span></span><span class=base ><span class=strut  style="height:0.7333em;vertical-align:-0.15em;"></span><span class=mord ><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class=msupsub ><span class="vlist-t vlist-t2"><span class=vlist-r ><span class=vlist  style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class=pstrut  style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class=vlist-s >​</span></span><span class=vlist-r ><span class=vlist  style="height:0.15em;"><span></span></span></span></span></span></span><span class=mspace  style="margin-right:0.2222em;"></span><span class=mbin >+</span><span class=mspace  style="margin-right:0.2222em;"></span></span><span class=base ><span class=strut  style="height:0.6833em;"></span><span class="mord mathnormal">a</span><span class=mord >Δ</span><span class="mord mathnormal">t</span></span></span></span></span> <span class=katex-display ><span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML" display=block ><semantics><mrow><mi>x</mi><mo>=</mo><msub><mi>x</mi><mn>0</mn></msub><mo>+</mo><mi>v</mi><mi mathvariant=normal >Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex"> x = x_0 + v \Delta t </annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.4306em;"></span><span class="mord mathnormal">x</span><span class=mspace  style="margin-right:0.2778em;"></span><span class=mrel >=</span><span class=mspace  style="margin-right:0.2778em;"></span></span><span class=base ><span class=strut  style="height:0.7333em;vertical-align:-0.15em;"></span><span class=mord ><span class="mord mathnormal">x</span><span class=msupsub ><span class="vlist-t vlist-t2"><span class=vlist-r ><span class=vlist  style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class=pstrut  style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">0</span></span></span></span><span class=vlist-s >​</span></span><span class=vlist-r ><span class=vlist  style="height:0.15em;"><span></span></span></span></span></span></span><span class=mspace  style="margin-right:0.2222em;"></span><span class=mbin >+</span><span class=mspace  style="margin-right:0.2222em;"></span></span><span class=base ><span class=strut  style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class=mord >Δ</span><span class="mord mathnormal">t</span></span></span></span></span> <p>For each small-time step which is <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant=normal >Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">\Delta t</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.6833em;"></span><span class=mord >Δ</span><span class="mord mathnormal">t</span></span></span></span> our speed changes by <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi mathvariant=normal >Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">a \Delta t</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.6833em;"></span><span class="mord mathnormal">a</span><span class=mord >Δ</span><span class="mord mathnormal">t</span></span></span></span> and in the same way balls position changes by <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mi mathvariant=normal >Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">v \Delta t</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class=mord >Δ</span><span class="mord mathnormal">t</span></span></span></span>. To keep error small we need <span class=katex ><span class=katex-mathml ><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant=normal >Δ</mi><mi>t</mi></mrow><annotation encoding="application/x-tex">\Delta t</annotation></semantics></math></span><span class=katex-html  aria-hidden=true ><span class=base ><span class=strut  style="height:0.6833em;"></span><span class=mord >Δ</span><span class="mord mathnormal">t</span></span></span></span> to be as small as possible.</p> <h3 id=requirements ><a href="#requirements" class=header-anchor >Requirements</a></h3> <p>You need to <a href="https://julialang.org/downloads/">install Julia.</a> We need the following directory structure:</p> <pre><code class="julia hljs">\---simulations
+    |   rungame.jl
+    |
+    \---ballsim
+            ballsim.jl</code></pre> <p>with the ballsim.jl containing the following code:</p> <pre><code class="julia hljs"><span class=hljs-keyword >using</span> GameZero
+
+rungame(<span class=hljs-string >&quot;ballsim/ballsim.jl&quot;</span>)</code></pre> <p>This is just how GameZero package seems to work at the time of writing. I didn&#39;t inspect why it needs to be this way. You will also need to add GameZero package. See <a href="https://docs.julialang.org/en/v1/stdlib/Pkg/">Pkg docs</a></p> <h3 id=the_simulation_code ><a href="#the_simulation_code" class=header-anchor >The simulation code</a></h3> <p>We will use <code>SIM_WIDTH</code> and <code>SIM_HEIGHT</code> as the dimensions of our experiment. <code>WIDTH</code> and <code>HEIGHT</code> on the other hand are the size of the window, GameZero.jl will display it. <code>scaling_factor</code> will be used to convert simulation to view. <code>t_delta</code> is the difference of time that our simulation will apply in each pass. I have decided <code>t_delta</code> value via experimentation.</p> <pre><code class="julia hljs">SIM_WIDTH = <span class=hljs-number >100</span>
+SIM_HEIGHT = <span class=hljs-number >100</span>
+WIDTH = <span class=hljs-number >1000</span>
+HEIGHT = <span class=hljs-number >1000</span>
+scaling_factor = WIDTH / SIM_WIDTH
+
+BACKGROUND = <span class=hljs-string >colorant&quot;antiquewhite&quot;</span>
+t_delta = <span class=hljs-number >1</span>/<span class=hljs-number >60</span></code></pre> <p>Next, we have a struct that represents our Ball objects physical properties. It is a mutable struct because properties like speed and position subject to change as time passes.</p> <pre><code class="julia hljs"><span class=hljs-keyword >mutable struct</span> Ball
+    x::<span class=hljs-built_in >Float16</span> <span class=hljs-comment ># horizontal position of the ball along the x axis</span>
+    y::<span class=hljs-built_in >Float16</span> <span class=hljs-comment ># vertical position of the ball along the y axis</span>
+    r::<span class=hljs-built_in >Float16</span> <span class=hljs-comment ># radius of the ball</span>
+    vx::<span class=hljs-built_in >Float16</span> <span class=hljs-comment ># horizontal speed of the ball</span>
+    vy::<span class=hljs-built_in >Float16</span> <span class=hljs-comment ># vertical speed of the ball</span>
+    ax::<span class=hljs-built_in >Float16</span> <span class=hljs-comment ># horizontal acceleration of the ball</span>
+    ay::<span class=hljs-built_in >Float16</span> <span class=hljs-comment ># vertical acceleration of the ball</span>
+<span class=hljs-keyword >end</span></code></pre> <p>Let&#39;s initialize our ball, you can use different parameters for different outcomes. This object <code>ball_sim</code> is our physical representation that we will use to calculate balls behaviour. On the other hand, <code>ball_obj</code> is the graphical representation of our ball. It&#39;s what we see in the screen. Circle is an object provided by the GameZero.jl.</p> <pre><code class="julia hljs">ball_sim = Ball(<span class=hljs-number >1</span>,<span class=hljs-number >50</span>,<span class=hljs-number >1</span>,<span class=hljs-number >5</span>,<span class=hljs-number >0</span>,<span class=hljs-number >0</span>,-<span class=hljs-number >10</span>) <span class=hljs-comment >#meters</span>
+ball_obj = Circle(ball_sim.x*scaling_factor, ball_sim.y*scaling_factor, ball_sim.r*scaling_factor)</code></pre> <p>Let&#39;s draw a horizontal line to the middle as the vertical starting point, just for making sure ball bounces back to same height each time.</p> <pre><code class="julia hljs">hline = Line(<span class=hljs-number >0</span>, <span class=hljs-number >500</span>, <span class=hljs-number >1000</span>, <span class=hljs-number >500</span>)</code></pre>
+<p>Finally, we have our draw function: let&#39;s get over it line by line:</p>
+<p><code>draw</code> function is called by GameZero.jl automatically and <code>Game</code> object called <code>g</code> is passed as an argument.</p>
+<pre><code class="julia hljs"><span class=hljs-keyword >function</span> draw(g::Game)</code></pre>
+<p>We first draw our balls current position and our line again because all drawing actions needs to be done inside the <code>draw</code> function.</p>
+<pre><code class="julia hljs"><span class=hljs-comment ># draw actors</span>
+    draw(ball_obj, <span class=hljs-string >colorant&quot;blue&quot;</span>, fill= <span class=hljs-literal >true</span>)
+    draw(hline, <span class=hljs-string >colorant&quot;black&quot;</span>)</code></pre>
+<p>We update the speed of our ball, as described in equation 1.</p>
+<pre><code class="julia hljs"><span class=hljs-comment >#update sim speed</span>
+    ball_sim.vx += ball_sim.ax * t_delta
+    ball_sim.vy += ball_sim.ay * t_delta</code></pre>
+<p>And the position of our ball, as described in equation 2.</p>
+<pre><code class="julia hljs"><span class=hljs-comment ># update sim pos</span>
+    ball_sim.x = ball_sim.vx * t_delta + ball_sim.x
+    ball_sim.y = ball_sim.vy * t_delta + ball_sim.y</code></pre>
+<p><strong>Note that one of the updates uses <code>&#61;</code> while other uses <code>&#43;&#61;</code>, it&#39;s just a shorthand operator called addition assignment that allows adding onto a variable instead of assigning a value to it</strong></p>
+<p>After all the updates we need to make sure the new position is still inside the boundaries of the room as follows:</p>
+<pre><code class="julia hljs"><span class=hljs-comment ># check x limits</span>
+<span class=hljs-keyword >if</span> ball_sim.x &gt; SIM_WIDTH-ball_sim.r <span class=hljs-comment ># upper limit</span>
+    ball_sim.x = SIM_WIDTH-ball_sim.r
+    ball_sim.vx = -ball_sim.vx
+<span class=hljs-keyword >elseif</span> ball_sim.x &lt; ball_sim.r <span class=hljs-comment ># lower limit</span>
+    ball_sim.x = ball_sim.r
+    ball_sim.vx = -ball_sim.vx
+<span class=hljs-keyword >end</span>
+<span class=hljs-comment ># check y limits</span>
+<span class=hljs-keyword >if</span> ball_sim.y &gt; SIM_HEIGHT-ball_sim.r <span class=hljs-comment ># upper limit</span>
+    ball_sim.y = SIM_HEIGHT-ball_sim.r
+    ball_sim.vy = -ball_sim.vy
+<span class=hljs-keyword >elseif</span>  ball_sim.y &lt; ball_sim.r <span class=hljs-comment ># lower limit</span>
+    ball_sim.y = ball_sim.r
+    ball_sim.vy = -ball_sim.vy
+<span class=hljs-keyword >end</span></code></pre>
+<p>Whenever x or y position pass the limits of the room, we reset the position to the last valid position and change the direction of speed.</p>
+<p>Finally, we update our ball&#39;s graphical representation:</p>
+<pre><code class="julia hljs"><span class=hljs-comment >#update ball_obj</span>
+    ball_obj.x, ball_obj.y = ball_sim.x*scaling_factor, HEIGHT - ball_sim.y*scaling_factor</code></pre>
+<p><strong>Here is the full <code>ballsim.jl</code> file content:</strong></p>
+<pre><code class="julia hljs"><span class=hljs-comment ># initialize screen</span>
+SIM_WIDTH = <span class=hljs-number >100</span>
+SIM_HEIGHT = <span class=hljs-number >100</span>
+WIDTH = <span class=hljs-number >1000</span>
+HEIGHT = <span class=hljs-number >1000</span>
+scaling_factor = WIDTH / SIM_WIDTH
+
+BACKGROUND = <span class=hljs-string >colorant&quot;antiquewhite&quot;</span>
+t_delta = <span class=hljs-number >1</span>/<span class=hljs-number >60</span>
+
+<span class=hljs-comment ># define initial state of actors</span>
+
+<span class=hljs-keyword >mutable struct</span> Ball
+    x::<span class=hljs-built_in >Float16</span>
+    y::<span class=hljs-built_in >Float16</span>
+    r::<span class=hljs-built_in >Float16</span>
+    vx::<span class=hljs-built_in >Float16</span>
+    vy::<span class=hljs-built_in >Float16</span>
+    ax::<span class=hljs-built_in >Float16</span>
+    ay::<span class=hljs-built_in >Float16</span>
+<span class=hljs-keyword >end</span>
+
+<span class=hljs-comment ># ideal representation used for calculation</span>
+ball_sim = Ball(<span class=hljs-number >1</span>,<span class=hljs-number >50</span>,<span class=hljs-number >1</span>,<span class=hljs-number >5</span>,<span class=hljs-number >0</span>,<span class=hljs-number >0</span>,-<span class=hljs-number >10</span>) <span class=hljs-comment >#meters</span>
+<span class=hljs-comment ># final object that actually got drawn</span>
+ball_obj = Circle(ball_sim.x*scaling_factor, ball_sim.y*scaling_factor, ball_sim.r*scaling_factor)
+<span class=hljs-comment ># starting y axis</span>
+hline = Line(<span class=hljs-number >0</span>, <span class=hljs-number >500</span>, <span class=hljs-number >1000</span>, <span class=hljs-number >500</span>)
+
+<span class=hljs-keyword >function</span> draw(g::Game)
+    <span class=hljs-comment ># draw actors</span>
+    draw(ball_obj, <span class=hljs-string >colorant&quot;blue&quot;</span>, fill= <span class=hljs-literal >true</span>)
+    draw(hline, <span class=hljs-string >colorant&quot;black&quot;</span>)
+
+    <span class=hljs-comment >#update sim speed</span>
+    ball_sim.vx += ball_sim.ax * t_delta
+    ball_sim.vy += ball_sim.ay * t_delta
+
+    <span class=hljs-comment ># update sim pos</span>
+    ball_sim.x = ball_sim.vx * t_delta + ball_sim.x
+    ball_sim.y = ball_sim.vy * t_delta + ball_sim.y
+
+    <span class=hljs-keyword >if</span> ball_sim.x &gt; SIM_WIDTH-ball_sim.r
+        ball_sim.x = SIM_WIDTH-ball_sim.r
+        ball_sim.vx = -ball_sim.vx
+    <span class=hljs-keyword >elseif</span> ball_sim.x &lt; ball_sim.r
+        ball_sim.x = ball_sim.r
+        ball_sim.vx = -ball_sim.vx
+    <span class=hljs-keyword >end</span>
+
+    <span class=hljs-keyword >if</span> ball_sim.y &gt; SIM_HEIGHT-ball_sim.r
+        ball_sim.y = SIM_HEIGHT-ball_sim.r
+        ball_sim.vy = -ball_sim.vy
+    <span class=hljs-keyword >elseif</span>  ball_sim.y &lt; ball_sim.r
+        ball_sim.y = ball_sim.r
+        ball_sim.vy = -ball_sim.vy
+    <span class=hljs-keyword >end</span>
+
+    <span class=hljs-comment >#update ball_obj</span>
+    ball_obj.x, ball_obj.y = ball_sim.x*scaling_factor, HEIGHT - ball_sim.y*scaling_factor
+<span class=hljs-keyword >end</span></code></pre>
+<div class=page-foot >
+    <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> Berkay Karlık. Last modified: April 10, 2023.
+    Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+</div>
+</div>
+    
+        
+
+
+
+    
+    
+        <script src="/libs/highlight/highlight.min.js"></script>
+<script>hljs.highlightAll();hljs.configure({tabReplace: '    '});</script>
