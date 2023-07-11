@@ -15,6 +15,7 @@ I promise I will make indexing better in future but for now let's get started wi
 </ul>
 ~~~ -->
 ~~~
+<a href="posts/3">Grinding LeetCode</a><br>
 <a href="posts/2">Simple Physics Simulation with Julia</a><br>
 <a href="posts/post1">Introduction to Image Generation with Artificial Intelligence</a>
 ~~~
