@@ -1,0 +1,23 @@
+---
+---
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Berkay Karlık</title>
+    <link rel="stylesheet" href="/src/styles/globals.css" />
+  </head>
+  <body>
+    <main class="container">
+      <slot /> <!-- ✅ This renders everything inside <Layout> in index.astro -->
+    </main>
+
+    <footer style="text-align: center; margin-top: 4rem;">
+      <p>Connect with me:</p>
+      <a href="https://www.linkedin.com/in/berkaykarlik/" target="_blank" rel="noopener">
+        <img src="/assets/linkedin-icon.svg" alt="LinkedIn" width="32" />
+      </a>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+---
+const languages = [
+  { name: "Python", logo: "/assets/python.svg" },
+  { name: "C++", logo: "/assets/c-plusplus.svg" },
+  { name: "Julia", logo: "/assets/julia.svg" },
+];
+
+const webSkills = [
+  { name: "HTML", logo: "/assets/html-5.svg" },
+  { name: "CSS", logo: "/assets/css-3.svg" },
+  { name: "JavaScript", logo: "/assets/javascript.svg" },
+  { name: "Astro", logo: "/assets/astro-icon.svg" },
+];
+---
+
+<section id="skills" style="margin-top: 4rem;">
+  <h2>Skills</h2>
+
+  <h3 style="margin-top: 2rem;">Programming Languages</h3>
+  <div style="display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 1rem;">
+    {languages.map(skill => (
+      <div style="text-align: center; width: 100px;">
+        <img src={skill.logo} alt={skill.name} width="64" height="64" />
+        <p>{skill.name}</p>
+      </div>
+    ))}
+  </div>
+
+  <h3 style="margin-top: 2rem;">Web / Frameworks</h3>
+  <div style="display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 1rem;">
+    {webSkills.map(skill => (
+      <div style="text-align: center; width: 100px;">
+        <img src={skill.logo} alt={skill.name} width="64" height="64" />
+        <p>{skill.name}</p>
+      </div>
+    ))}
+  </div>
+</section>
